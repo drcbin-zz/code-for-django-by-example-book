@@ -1,1 +1,1 @@
-# code-of-django-by-example-book
+# code of django by example book
