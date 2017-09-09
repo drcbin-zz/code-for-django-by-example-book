@@ -4,8 +4,9 @@ from django.views.generic import ListView
 from django.core.mail import send_mail
 from django.db.models import Count
 from taggit.models import Tag
+from haystack.query import SearchQuerySet
 from .models import Post, Comment
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm, CommentForm, SearchForm
 
 # Create your views here.
 
@@ -78,3 +79,15 @@ def post_share(request, post_id):
 
 
 
+def post_search(request):
+    form = SearchForm()
+    cd = None
+    results = None
+    total_results = None
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            cd = form.cleaned_data
+            results = SearchQuerySet().models(Post).filter(content=cd['query']).load_all()
+            total_results = results.count()
+    return render(request, 'blog/post/search.html', {'form': form, 'cd': cd, 'results':results, 'total_results':total_results})

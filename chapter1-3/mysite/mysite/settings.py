@@ -13,8 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -35,6 +34,9 @@ EMAIL_PORT = 587
 EMAIL_USER_TLS = True
 
 
+
+SITE_ID = 1
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,6 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog',
     'taggit',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    'haystack',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +132,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+            'URL': 'http://localhost:8983/solr/blog'
+            }
+        }
