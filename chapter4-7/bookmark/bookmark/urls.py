@@ -15,13 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from account import urls as account_urls
 from django.conf import settings
 from django.conf.urls.static import static
+from account import urls as account_urls
+from images import urls as images_urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^account/', include(account_urls, )),
+    url(r'^images/', include(images_urls, namespace='images')),
 ]
 
 
@@ -30,3 +32,4 @@ urlpatterns = [
 # only for debug development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

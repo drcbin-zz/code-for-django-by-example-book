@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+    <h1>{{ image.title  }}</h1>
+    <img src="{{ image.image.url }}" alt=""/>
+    {% load thumbnail %}
+
+    {% thumbnail  image.image "300" as im %}
+    <a href="{{ image.image.url }}">
+        <img src="{{ im.url }}" class="image-detail" alt=""/>
+    </a>
+    {% endthumbnail %}
+
+    {% with total_likes=image.users_like.count users_like=image.users_like.all %}
+        <div class="image-info">
+            <div>
+                <span class="total">{{ total_likes }} likes.  </span>
+                <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="like button" >
+                    {% if request.user not in users_like %}
+                        Like
+                    {% else %}
+                        Unlike
+                    {% endif %}
+                </a>
+            </div>
+            {{ image.description | linebreaks }}
+        </div>
+        <div class="image-likes">
+            {% for user in image.users_like.all %}
+                <div>
+                    <img src="{{ user.profile.photo.url }}"/>
+                    <p>{{ user.username }}</p>
+                </div>
+            {% empty %}
+                <p>Nobody like this.</p>
+            {% endfor %}
+        </div>
+    {% endwith %}
+{% endblock %}
+
+
+{% block domready %}
+    $('a.like').click(
+        function(e){
+            e.preventDefault();
+            $.post(
+                '{% url "images:like" %}',    // request url
+                // request data
+                {
+                    id: $(this).data('id'),
+                    action: $(this).data('action')
+                },
+                // response action
+                function(data){
+                    if (data['status'] == 'ok'){
+                        // request successfully
+
+                        // old action 
+                        var previous_action = $('a.like').data('action');
+
+                        // change button value
+                        $('a.like').data('action', previous_action == 'like' ? 'unlike' : 'like');
+
+                        // change button text
+                        $('a.like').text(previous_action == 'like' ? 'Unlike' : 'Like');
+
+                        // old like user count
+                        var previous_likes = parseInt($('span.count .total').text());
+
+                        // change user likes count
+                        $('span.count .total').text(previous_action == 'like' ? previous_likes + 1 : previous_likes - 1);
+                    }
+                }
+            );
+        }
+    );
+{% endblock domready %}
