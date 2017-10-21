@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h1>Login</h1>
+    <div class="module">
+        {% if request.user.is_authenticated %}
+            <p>You have been loged-in. Click <a href="{% url "logout" %}">here</a> to logout.</p>
+        {% else %}
+            {% if form.errors %}
+                <p>Your username and password didn't match.</p>
+            {% else %}
+                <p>Plase use the follow form to log-in:</p>
+            {% endif %}
+            <div class="login-form">
+                <form action="{% url "login" %}" method="post" accept-charset="utf-8">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                    <input type="hidden" name="next"  value="{{ next  }}" />
+                    <input type="submit"  id="" value="Login" />
+                </form>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}
+
